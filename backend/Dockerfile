@@ -1,19 +1,13 @@
-# Usamos una imagen base de OpenJDK 17
-FROM eclipse-temurin:17-jdk-alpine
+# backend-build
+FROM eclipse-temurin:17-jdk-alpine AS backend-build
 
-# Directorio de la app
-WORKDIR /app
+WORKDIR /app/backend
 
-# Copiamos los archivos de Gradle y código
-COPY build.gradle settings.gradle gradlew ./
-COPY gradle/ gradle/
-COPY src/ src/
+COPY backend/build.gradle backend/settings.gradle backend/gradlew ./
+COPY backend/gradle/ backend/gradle/
+COPY backend/src/ backend/src/
 
-# Compilamos el proyecto
-RUN ./gradlew build -x todoApp
+# Dar permisos de ejecución a gradlew
+RUN chmod +x ./gradlew
 
-# Exponemos el puerto 8080
-EXPOSE 8080
-
-# Comando para ejecutar la app
-CMD ["java", "-jar", "build/libs/backend-0.0.1-SNAPSHOT.jar"]
+RUN ./gradlew build -x test
