@@ -1,25 +1,14 @@
-# Etapa de build usando Gradle Wrapper
-FROM eclipse-temurin:17-jdk-alpine AS builder
-WORKDIR /app
+FROM gradle:4.7.0-jdk8-alpine AS build
+COPY --chown=gradle:gradle . /home/gradle/src
+WORKDIR /home/gradle/src
+RUN gradle build --no-daemon 
 
-# Copiar archivos de Gradle y código fuente
-COPY gradlew .
-COPY gradle ./gradle
-COPY build.gradle settings.gradle ./
-COPY src ./src
+FROM openjdk:8-jre-slim
 
-# Construir el JAR sin ejecutar tests
-RUN ./gradlew clean build -x test
-
-# Etapa final: imagen más ligera solo para correr el JAR
-FROM eclipse-temurin:17-jdk-alpine
-WORKDIR /app
-
-# Copiar el JAR construido
-COPY --from=builder /app/build/libs/*.jar app.jar
-
-# Exponer puerto
 EXPOSE 8080
 
-# Ejecutar la aplicación
-ENTRYPOINT ["java","-jar","app.jar"]
+RUN mkdir /app
+
+COPY --from=build /home/gradle/src/build/libs/*.jar /app/spring-boot-application.jar
+
+ENTRYPOINT ["java", "-XX:+UnlockExperimentalVMOptions", "-XX:+UseCGroupMemoryLimitForHeap", "-Djava.security.egd=file:/dev/./urandom","-jar","/app/spring-boot-application.jar"]
