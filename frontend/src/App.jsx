@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import TaskList from './pages/TaskList'
@@ -11,6 +11,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Navigate to="/tasks" />} />
         <Route
           path="/tasks"
           element={
@@ -35,7 +36,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        <Route path="/" element={<Navigate to="/tasks" />} />
       </Routes>
     </Router>
   )

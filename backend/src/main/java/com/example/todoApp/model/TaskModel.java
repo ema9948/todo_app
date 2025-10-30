@@ -1,13 +1,10 @@
 package com.example.todoApp.model;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -15,14 +12,17 @@ import java.util.Set;
 @Builder
 @Entity
 public class TaskModel {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    Long id;
-    Boolean status;
-    String task;
+    private Long id;
 
-    @ManyToOne()
+    @Enumerated(EnumType.STRING)
+    private Status status;
+
+    private String task;
+
+    @ManyToOne
     @JoinColumn(name = "user_id")
-    UserModel user;
-
+    private UserModel user;
 }

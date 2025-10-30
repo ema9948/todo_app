@@ -1,6 +1,8 @@
 package com.example.todoApp.dto;
 
+import com.example.todoApp.model.Status;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,10 +13,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class TaskDTO {
-    @NotBlank(message = "El id no puede estar vacío")
-    Long id;
-    @NotBlank(message = "El status no puede estar vacío")
-    Boolean status;
-    @NotBlank(message = "El task no puede estar vacío")
-    String task;
+
+    @NotNull(message = "The id cannot be null")
+    private Long id;
+
+    @NotNull(message = "The status cannot be null")
+    private Status status;
+
+    @NotBlank(message = "The task cannot be blank")
+    private String task;
 }

@@ -7,7 +7,7 @@ export const register = async (email, password) => {
 
 export const login = async (email, password) => {
   const res = await api.post('/auth/authentication', { email, password })
-  const { userId } = res.data
+  const {userID  : userId} = res.data
   localStorage.setItem('userId', userId)
   return { userId }
 }

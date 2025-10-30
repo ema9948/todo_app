@@ -23,6 +23,9 @@ public class TaskService implements ITaskService {
         this.userRepository = userRepository;
     }
 
+    // -----------------------------
+    // CREATE
+    // -----------------------------
     @Override
     public void save(Long userId, TaskDTO taskDTO) {
         UserModel user = userRepository.findById(userId)
@@ -30,13 +33,16 @@ public class TaskService implements ITaskService {
 
         TaskModel task = TaskModel.builder()
                 .task(taskDTO.getTask())
-                .status(taskDTO.getStatus())
+                .status(taskDTO.getStatus())  // ahora es un enum Status
                 .user(user)
                 .build();
 
         taskRepository.save(task);
     }
 
+    // -----------------------------
+    // READ (single)
+    // -----------------------------
     @Override
     public TaskDTO getTask(Long userId, Long taskId) {
         TaskModel task = findTaskOwnedBy(userId, taskId);
@@ -47,6 +53,9 @@ public class TaskService implements ITaskService {
                 .build();
     }
 
+    // -----------------------------
+    // READ (all)
+    // -----------------------------
     @Override
     public List<TaskDTO> allTask(Long userId) {
         return taskRepository.findByUserId(userId).stream()
@@ -58,12 +67,18 @@ public class TaskService implements ITaskService {
                 .toList();
     }
 
+    // -----------------------------
+    // DELETE
+    // -----------------------------
     @Override
     public void delete(Long userId, Long taskId) {
         TaskModel task = findTaskOwnedBy(userId, taskId);
         taskRepository.delete(task);
     }
 
+    // -----------------------------
+    // PATCH (update partial)
+    // -----------------------------
     @Override
     @Transactional
     public void patch(Long userId, TaskDTO taskDTO) {
@@ -75,6 +90,9 @@ public class TaskService implements ITaskService {
             task.setStatus(taskDTO.getStatus());
     }
 
+    // -----------------------------
+    // PRIVATE HELPER
+    // -----------------------------
     private TaskModel findTaskOwnedBy(Long userId, Long taskId) {
         TaskModel task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ApiException("TASK NOT FOUND", HttpStatus.NOT_FOUND));
