@@ -1,28 +1,24 @@
-# Etapa 1: construir la aplicación
-FROM gradle:8.4-jdk17 AS builder
-
+# Usar una imagen base de Gradle para construir el proyecto
+FROM gradle:8.3.3-jdk17 AS builder
 WORKDIR /app
 
-# Copia archivos de configuración de Gradle para aprovechar cache
-COPY build.gradle settings.gradle gradle.properties ./
+# Copiar archivos necesarios para la compilación
+COPY build.gradle settings.gradle ./
 COPY gradle ./gradle
-
-# Copia el resto del proyecto
 COPY src ./src
 
-# Construye el jar en modo release
-RUN gradle clean bootJar --no-daemon
+# Construir el JAR de la aplicación
+RUN gradle clean build -x test --no-daemon
 
-# Etapa 2: ejecutar la aplicación
+# Usar una imagen más ligera de OpenJDK para ejecutar la app
 FROM eclipse-temurin:17-jdk-alpine
-
 WORKDIR /app
 
-# Copia el jar construido desde la etapa anterior
+# Copiar el JAR compilado desde la etapa de construcción
 COPY --from=builder /app/build/libs/*.jar app.jar
 
-# Expone el puerto donde Spring Boot corre
+# Exponer el puerto de la app
 EXPOSE 8080
 
-# Comando para ejecutar la aplicación
-ENTRYPOINT ["java", "-jar", "app.jar"]
+# Comando para ejecutar la app
+ENTRYPOINT ["java","-jar","app.jar"]
