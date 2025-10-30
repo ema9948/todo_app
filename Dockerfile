@@ -1,5 +1,5 @@
 # Stage 1: Build
-FROM gradle:8.3.3-jdk17 AS build
+FROM gradle:8.3.3-jdk17-alpine AS build
 
 COPY --chown=gradle:gradle . /home/gradle/src
 WORKDIR /home/gradle/src
@@ -7,7 +7,7 @@ WORKDIR /home/gradle/src
 RUN gradle build --no-daemon
 
 # Stage 2: Runtime
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre
 
 EXPOSE 8080
 RUN mkdir /app
